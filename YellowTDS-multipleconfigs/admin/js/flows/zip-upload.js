@@ -1,0 +1,63 @@
+import { getFlowDist, redistributeWeights } from './weights.js';
+import { buildFolderRow } from './templates.js';
+
+// ── Upload ZIP: pick file, prompt folder name, upload, insert row ──
+export function handleZipUpload(btn) {
+    var fi = btn.dataset.fi;
+    if (!fi) return;
+
+    // Find the step section's folder items container
+    var stepSec = btn.closest('.step-section');
+    if (!stepSec) return;
+    var container = stepSec.querySelector('.flow-step-folder-items');
+    if (!container) return;
+    var showWeight = getFlowDist(fi) === 'weighted';
+
+    // Pick file first (preserves user gesture), then ask for folder name
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.zip';
+    fileInput.style.display = 'none';
+    document.body.appendChild(fileInput);
+
+    fileInput.addEventListener('change', function () {
+        if (!fileInput.files.length) { fileInput.remove(); return; }
+        var file = fileInput.files[0];
+
+        var folderName = prompt('Digite o nome da pasta para os arquivos enviados:');
+        if (!folderName || !folderName.trim()) { fileInput.remove(); return; }
+        folderName = folderName.trim();
+        if (!/^[a-zA-Z0-9_\-\.]+$/.test(folderName)) {
+            alert('Nome de pasta inválido. Use apenas letras, números, hífens, underscores e pontos.');
+            fileInput.remove();
+            return;
+        }
+
+        var fd = new FormData();
+        fd.append('zipfile', file);
+        fd.append('folder', folderName);
+
+        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Enviando...';
+        btn.style.pointerEvents = 'none';
+
+        fetch('zipupload.php', { method: 'POST', body: fd })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data.error) {
+                    alert('Erro no envio: ' + data.result);
+                } else {
+                    container.appendChild(buildFolderRow(data.folder, showWeight));
+                    if (showWeight) {
+                        redistributeWeights(container.querySelectorAll('.flow-step-weight'));
+                    }
+                }
+            })
+            .catch(function (err) { alert('Falha no envio: ' + err); })
+            .finally(function () {
+                btn.innerHTML = '<i class="bi bi-upload"></i> Enviar ZIP';
+                btn.style.pointerEvents = '';
+                fileInput.remove();
+            });
+    });
+    fileInput.click();
+}

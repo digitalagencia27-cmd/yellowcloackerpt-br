@@ -1,0 +1,56 @@
+<!-- Stats Table Editor Modal -->
+<link rel="stylesheet" href="css/modal-common.css">
+<link rel="stylesheet" href="css/sortable-common.css">
+
+<div id="statsTableModal" class="ywbmodal">
+    <div class="modal-content">
+        <div class="modal-body">
+            <div class="form-group" style="max-width: 200px;">
+                <h5>Nome da Tabela</h5>
+                <input type="text" class="form-control" id="tableName">
+            </div>
+
+            <div class="columns-flex-container">
+                <div class="columns-section">
+                    <h5>Colunas
+                        <span id="selectAllMetrics" class="header-checkbox-btn" title="Selecionar Todas"><input type="checkbox" checked readonly></span>
+                        <span id="deselectAllMetrics" class="header-checkbox-btn" title="Desmarcar Todas"><input type="checkbox" readonly></span>
+                    </h5>
+                    <div class="columns-container">
+                        <div id="metricsColumns" class="metricsColumns"></div>
+                    </div>
+                </div>
+
+                <div class="columns-section">
+                    <h5>Agrupar Por
+                        <button id="addParamDimension" class="btn btn-sm btn-outline-primary" style="margin-left: 8px;">+ Parâmetro URL</button>
+                    </h5>
+                    <div class="columns-container">
+                        <div id="dimensionsColumns" class="dimensionsColumns"></div>
+                    </div>
+                </div>
+
+                <div class="filters-section">
+                    <h5>Filtros <button id="addFilterRow" class="btn btn-sm btn-outline-primary" style="margin-left: 8px;">+ Adicionar</button></h5>
+                    <div style="margin-bottom: 6px;">
+                        <label style="margin-right: 8px;">Condição:</label>
+                        <select id="filterCondition" class="form-control" style="width: 80px; display: inline-block;">
+                            <option value="AND">E</option>
+                            <option value="OR">OU</option>
+                        </select>
+                    </div>
+                    <div class="columns-container">
+                        <div id="filterRows"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" id="cancelTableBtn">Cancelar</button>
+            <button type="button" class="btn btn-primary" id="saveTableBtn">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<script src="js/sortable-common.js"></script>
+<script src="js/statstableeditor.js"></script>
